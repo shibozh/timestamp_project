@@ -24,20 +24,57 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get("api/:date?", (res, req) => {
-  const dateString = res.params["date"];
-  let date;
+// app.get('/api', (req, res) => {
+//   const date = new Date();
 
+//   res.json({
+//     unix: date.getTime(),
+//     utc: date.toUTCString()
+//   });
+// });
+
+// app.get('/api/:date', (req, res) => {
+//   const dateString = req.params.date;
+
+//   let date;
+//   if (!isNaN(dateString)) {
+//     // 如果 dateString 是一个数字（Unix 时间戳）
+//     date = new Date(parseInt(dateString));
+//   } else {
+//     // 如果 dateString 是一个字符串（日期格式）
+//     date = new Date(dateString);
+//   }
+
+//   // 检查日期是否有效
+//   if (isNaN(date.getTime())) {
+//     res.json({ error: "Invalid Date" });
+//   } else {
+//     res.json({
+//       unix: date.getTime(),
+//       utc: date.toUTCString()
+//     });
+//   }
+// });
+
+app.get('/api/:date?', (req, res) => {
+  const dateString = req.params.date;
+
+  let date;
   if (!dateString) {
+    // 如果没有提供日期，使用当前日期
     date = new Date();
   } else {
-    if (isNaN(dateString)) {
-      date = new Date(dateString);
-    } else {
+    // 尝试解析提供的日期
+    if (!isNaN(dateString)) {
+      // 如果 dateString 是一个数字（Unix 时间戳）
       date = new Date(parseInt(dateString));
+    } else {
+      // 如果 dateString 是一个字符串（日期格式）
+      date = new Date(dateString);
     }
   }
 
+  // 检查日期是否有效
   if (isNaN(date.getTime())) {
     res.json({ error: "Invalid Date" });
   } else {
@@ -46,8 +83,7 @@ app.get("api/:date?", (res, req) => {
       utc: date.toUTCString()
     });
   }
-})
-
+});
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
